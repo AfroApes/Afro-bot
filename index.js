@@ -49,14 +49,14 @@ const processBalance = async (msg) => {
     /^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$/g;
   if (regexp.test(addr)) {
     const address = await ens.getAddress(addr);
-    msg.reply(`Address is ${address}, checking balance`);
+    msg.channel.send(`checking balance...`);
     try {
-      msg.reply(await balanceOf(address));
+      msg.channel.send(`Elder ${addr} owns ${await balanceOf(address)} Afro Apes Origin. You're an Elder `);
     } catch (error) {
       msg.reply("Unexpected error occured while fetching balance");
     }
   } else if (Web3.utils.isAddress(address)) {
-    msg.reply(await balanceOf(address));
+    msg.channel.send(`${addr} owns ${await balanceOf(address)} Afro Apes Origin. `);
   } else {
     msg.reply(`${address} is not valid`);
   }
@@ -71,13 +71,14 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
+
   if (msg.content.startsWith("!token-")) {
     await getToken(msg);
     // msg.reply(mints[id]);
   }
   if (msg.content === "!mints") {
     const mints = await ShowMints();
-    msg.reply(`AL mint ${mints.length}/50`);
+    msg.channel.send(`AL mint ${mints.length}/50`);
   }
   if (msg.content.startsWith("!balance")) {
     await processBalance(msg);
