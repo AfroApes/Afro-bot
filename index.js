@@ -48,7 +48,7 @@ const processBalance = async (msg) => {
   const regexp =
     /^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$/g;
   if (regexp.test(addr)) {
-    const address = ens.getAddress(addr);
+    const address = await ens.getAddress(addr);
     msg.reply(`Address is ${address}, checking balance`);
     try {
       msg.reply(await balanceOf(address));
