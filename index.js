@@ -14,6 +14,11 @@ let options = {
   fromBlock: 0, //Number || "earliest" || "pending" || "latest"
   toBlock: "latest",
 };
+
+
+web3.eth.getBlockNumber().then((result) => {
+  console.log("Latest Ethereum Block is ", result);
+});
 /**
  * Get all AfroList mints
  * @returns Array
@@ -22,6 +27,13 @@ const ShowMints = async () =>
   await myContract.getPastEvents("OGMinted", options);
 const balanceOf = async (address) =>
   await myContract.methods.balanceOf(address).call();
+
+/**
+ * Get total supply of tokens
+ * @returns int
+ */
+const totalSupply = async () =>await myContract.methods.totalSupply().call();
+
 /**
  * Get a token
  * @param {Object} msg
@@ -29,8 +41,8 @@ const balanceOf = async (address) =>
  */
 const getToken = async (msg) => {
   const id = parseInt(msg.content.split("-")[1]);
-  const mints = await ShowMints();
-  if (id > mints.length + 8 - 1) {
+  const supply = await totalSupply()
+  if (id > supply) {
     msg.reply("token does not exist");
     return;
   }
@@ -43,6 +55,11 @@ const getToken = async (msg) => {
       // msg.channel.send(new MessageAttachment(url.temp_path))
     });
 };
+
+/**
+ * Get owners Balance of token
+ * @param {object} msg 
+ */
 const processBalance = async (msg) => {
   const addr = msg.content.split(" ")[1];
   const regexp =
@@ -63,30 +80,33 @@ const processBalance = async (msg) => {
   } else {
     msg.reply(`${address} is not valid`);
   }
-  msg.channel.stoptTyping(1)
+  msg.channel.stopTyping(true)
 };
 
-// .catch(err => throw err);
-web3.eth.getBlockNumber().then((result) => {
-  console.log("Latest Ethereum Block is ", result);
-});
+
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on("message", async (msg) => {
+  try {
+    if (msg.content.startsWith("!token-")) {
+      await getToken(msg);
+      // msg.reply(mints[id]);
+    }
+    if (msg.content === "!mints") {
+      const mints = await ShowMints();
+      msg.channel.send(`AL mint ${mints.length}/50`);
+    }
+    if (msg.content.startsWith("!balance")) {
+      await processBalance(msg);
+    }
+  } catch (error) {
+    
+    msg.reply("Unexpected error occured: " + error.message);
+  }
 
-  if (msg.content.startsWith("!token-")) {
-    await getToken(msg);
-    // msg.reply(mints[id]);
-  }
-  if (msg.content === "!mints") {
-    const mints = await ShowMints();
-    msg.channel.send(`AL mint ${mints.length}/50`);
-  }
-  if (msg.content.startsWith("!balance")) {
-    await processBalance(msg);
-  }
+  
 });
 
 client.login(process.env.CLIENT_TOKEN); //login bot using token
