@@ -13,6 +13,10 @@
 </tr>
 <tr>
     <td>!token-n</td>
-    <td>returns token image/td>
+    <td>returns token image</td>
+</tr>
+<tr>
+    <td>!balance 0x123...</td>
+    <td>returns balanceof address in afroape origin</td>
 </tr>
 </table>
