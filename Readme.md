@@ -3,8 +3,8 @@
 <p>An in-house tool for AfroApe developers</p>
 
 <table>
-<th>
-<td>Command</td>
-<td>Response</td>
-</th>
+<tr>
+<th>Command</th>
+<th>Response</th>
+</tr>
 </table>
