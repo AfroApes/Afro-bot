@@ -20,8 +20,28 @@ let options = {
  */
 const ShowMints = async ()=> await myContract.getPastEvents('OGMinted', options)
 const balanceOf = async (address)=> await myContract.methods.balanceOf(address).call()
+/**
+ * Get a token
+ * @param {Object} msg 
+ * @returns void
+ */
+ const getToken = async (msg) => {
+  const id = parseInt(msg.content.split('-')[1])
+  const mints = await ShowMints()
+  if(id > (mints.length + 7) - 1) {
+    msg.reply('token does not exist')
+    return;
+  }
+  msg.reply(`Fetching token ${id}...`)
+  await axios.get('https://api.afroapes.com/v1/collections/afro-apes-the-origin/'+id).then(response => {
+  
+    const url = response.data
+    msg.reply(url.temp_path);
+    // msg.channel.send(new MessageAttachment(url.temp_path))
+  })
+}
 const processBalance = async (msg)=>{
-  const address = msg.content.trim.split(' ')[1]
+  const address = msg.content.split(' ')[1]
   if (Web3.utils.isAddress(address)) {
     msg.reply(await balanceOf(address))
   }
@@ -43,42 +63,15 @@ client.on("message", async (msg) => {
     await getToken(msg)
     // msg.reply(mints[id]);
   }
-  else if (msg.content === "!mints") {
+  if (msg.content === "!mints") {
     const mints = await ShowMints()
     msg.reply(`AL mint ${mints.length}/50`);
   }
-  else if (msg.content.startsWith('!balance') ) {
+  if (msg.content.startsWith('!balance') ) {
     await processBalance(msg)
   }
 });
 
-/**
- * 
- */
-client.on('message', async (msg) => {
-  if (msg.content = "substi") {
-    await getToken(msg)
-    // msg.reply(mints[id]);
-  }
-})
-/**
- * Get a token
- * @param {Object} msg 
- * @returns void
- */
-const getToken = async (msg) => {
-  const id = parseInt(msg.content.split('-')[1])
-  const mints = await ShowMints()
-  if(id > (mints.length + 7) - 1) {
-    msg.reply('token does not exist')
-    return;
-  }
-  msg.reply(`Fetching token ${id}...`)
-  await axios.get('https://api.afroapes.com/v1/collections/afro-apes-the-origin/'+id).then(response => {
-  
-    const url = response.data
-    msg.reply(url.temp_path);
-    // msg.channel.send(new MessageAttachment(url.temp_path))
-  })
-}
+
+
 client.login(process.env.CLIENT_TOKEN); //login bot using token
