@@ -5,5 +5,6 @@
 <table>
 <th>
 <td>Command</td>
+<td>Response</td>
 </th>
 </table>
