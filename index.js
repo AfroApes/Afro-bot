@@ -56,6 +56,7 @@ const processBalance = async (msg) => {
       msg.reply("Unexpected error occured while fetching balance");
     }
   } else if (Web3.utils.isAddress(address)) {
+    msg.channel.send(`checking balance...`);
     msg.channel.send(`${addr} owns ${await balanceOf(address)} Afro Apes Origin. `);
   } else {
     msg.reply(`${address} is not valid`);
