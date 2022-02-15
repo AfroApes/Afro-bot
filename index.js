@@ -30,7 +30,7 @@ const balanceOf = async (address) =>
 const getToken = async (msg) => {
   const id = parseInt(msg.content.split("-")[1]);
   const mints = await ShowMints();
-  if (id > mints.length + 7 - 1) {
+  if (id > mints.length + 8 - 1) {
     msg.reply("token does not exist");
     return;
   }
