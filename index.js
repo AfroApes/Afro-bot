@@ -50,6 +50,8 @@ const processBalance = async (msg) => {
   if (regexp.test(addr)) {
     const address = await ens.getAddress(addr);
     msg.channel.send(`checking balance...`);
+    msg.channel.startTyping(3)
+      
     try {
       msg.channel.send(`Elder ${addr} owns ${await balanceOf(address)} Afro Apes Origin. You're an Elder `);
     } catch (error) {
@@ -61,6 +63,7 @@ const processBalance = async (msg) => {
   } else {
     msg.reply(`${address} is not valid`);
   }
+  msg.channel.stoptTyping(1)
 };
 
 // .catch(err => throw err);
