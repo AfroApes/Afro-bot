@@ -4,7 +4,15 @@
 
 <table>
 <tr>
-<th>Command</th>
-<th>Response</th>
+    <th>Command</th>
+    <th>Response</th>
+</tr>
+<tr>
+    <td>!mints</td>
+    <td>Al n/50</td>
+</tr>
+<tr>
+    <td>!token-n</td>
+    <td>returns token image/td>
 </tr>
 </table>
