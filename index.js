@@ -130,18 +130,15 @@ client.on("message", async (msg) => {
       await getToken(msg);
       // msg.reply(mints[id]);
     }
-    else if (msg.content === "!mints") {
+     if (msg.content === "!mints") {
       const mints = await ShowMints();
       msg.channel.send(`AL mint ${mints.length}/50`);
     }
-    else if (msg.content.startsWith("!balance")) {
+     if (msg.content.startsWith("!balance")) {
       await processBalance(msg);
     }
-    else if (msg.content.startsWith("!owner-of")) {
+     if (msg.content.startsWith("!owner-of")) {
       await getOwnerOfToken(msg);
-    }
-    else{
-      msg.reply(`Hello how are you? `);
     }
   } catch (error) {
     msg.reply("Unexpected error occured: " + error.message);
