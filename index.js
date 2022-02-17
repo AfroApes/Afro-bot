@@ -158,29 +158,39 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   try {
-    msg.channel.startTyping(3);
+    
     if (msg.content.startsWith("!token-")) {
+      msg.channel.startTyping(3);
       await getToken(msg);
+      msg.channel.stopTyping(true);
       // msg.reply(mints[id]);
     }
     if (msg.content === "!mints") {
+      msg.channel.startTyping(3);
       const mints = await ShowMints();
       msg.channel.send(`AL mint ${mints.length}/50`);
+      msg.channel.stopTyping(true);
     }
     if (msg.content.startsWith("!balance")) {
+      msg.channel.startTyping(3);
       await processBalance(msg);
+      msg.channel.stopTyping(true);
     }
     if (msg.content.startsWith("!owner-of")) {
+      msg.channel.startTyping(3);
       await getOwnerOfToken(msg);
+      msg.channel.stopTyping(true);
     }
     if (msg.content === '!commands') {
+      msg.channel.startTyping(3);
       msg.channel.send('Fetching Commands...');
       for (let index = 0; index < commands.length; index++) {
         const c = commands[index];
         msg.channel.send(`${c.command} => ${c.description}`)
       }
+      msg.channel.stopTyping(true);
     }
-    msg.channel.stopTyping(true);
+    
   } catch (error) {
     msg.reply("Unexpected error occured: " + error.message);
   }
