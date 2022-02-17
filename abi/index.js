@@ -1,4 +1,4 @@
-module.exports = [
+const abi = [
   {
     inputs: [
       {
@@ -602,3 +602,4 @@ module.exports = [
   },
 ];
 
+export  {abi}

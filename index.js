@@ -1,16 +1,14 @@
-require("dotenv").config(); //initialize dotenv
-
-const { Client, MessageAttachment } = require("discord.js");
+import dotenv from "dotenv";
+dotenv.config(); //initialize dotenv
+// import ENS, { getEnsAddress } from '@ensdomains/ensjs'
+import { Client, MessageAttachment } from "discord.js";
+import namehash from "eth-ens-namehash";
 const client = new Client();
 var provider = process.env.MAINNET;
-const axios = require("axios");
-const abi = require("./abi");
-var Web3 = require("web3");
-import ENS, { getEnsAddress } from '@ensdomains/ensjs'
+import axios from "axios";
+import { abi } from "./abi/index.js";
+import Web3 from "web3";
 
-
-
-const ensjs = new ENS({ provider, ensAddress: getEnsAddress('1') })
 
 var web3Provider = new Web3.providers.HttpProvider(provider);
 var web3 = new Web3(web3Provider);
@@ -24,6 +22,25 @@ let options = {
 web3.eth.getBlockNumber().then((result) => {
   console.log("Latest Ethereum Block is ", result);
 });
+
+async function reverseENSLookup(address, web3) {
+  let lookup = address.toLowerCase().substr(2) + ".addr.reverse";
+  let ResolverContract = await web3.eth.ens.getResolver(lookup);
+  let nh = namehash.hash(lookup);
+  try {
+    let name = await ResolverContract.methods.name(nh).call();
+    if (name && name.length) {
+      const verifiedAddress = await web3.eth.ens.getAddress(name);
+      if (
+        verifiedAddress &&
+        verifiedAddress.toLowerCase() === address.toLowerCase()
+      ) {
+        return name;
+      }
+    }
+  } catch (e) {}
+}
+
 /**
  * Get all AfroList mints
  * @returns Array
@@ -108,23 +125,21 @@ const getOwnerOfToken = async (msg) => {
     msg.channel.send(`Fetching owner of token ${id}...`);
 
     msg.channel.startTyping(3);
-    const owner = await ownerOf(id)
-    var name = await ensjs.getName(owner)
-// Check to be sure the reverse record is correct.
-if(owner != await ensjs.name(name).getAddress()) {
-  name = owner;
-}
+    const owner = await ownerOf(id);
+    var name = await reverseENSLookup(owner, web3);
+    console.log(name)
+    // Check to be sure the reverse record is correct.
+    if (!name) {
+      name = owner;
+    }
 
     await axios
-    .get("https://api.afroapes.com/v1/collections/afro-apes-the-origin/" + id)
-    .then((response) => {
-      const url = response.data;
-      msg.channel.send(new MessageAttachment(url.temp_path))
-      msg.channel.send(
-        `Elder ${name} owns this Afro Ape `
-      );
-    });
-    
+      .get("https://api.afroapes.com/v1/collections/afro-apes-the-origin/" + id)
+      .then((response) => {
+        const url = response.data;
+        msg.channel.send(new MessageAttachment(url.temp_path));
+        msg.channel.send(`Elder ${name} owns this Afro Ape `);
+      });
   } catch (error) {
     msg.reply("Unexpected error occured while fetching balance");
   }
@@ -142,14 +157,14 @@ client.on("message", async (msg) => {
       await getToken(msg);
       // msg.reply(mints[id]);
     }
-     if (msg.content === "!mints") {
+    if (msg.content === "!mints") {
       const mints = await ShowMints();
       msg.channel.send(`AL mint ${mints.length}/50`);
     }
-     if (msg.content.startsWith("!balance")) {
+    if (msg.content.startsWith("!balance")) {
       await processBalance(msg);
     }
-     if (msg.content.startsWith("!owner-of")) {
+    if (msg.content.startsWith("!owner-of")) {
       await getOwnerOfToken(msg);
     }
   } catch (error) {
