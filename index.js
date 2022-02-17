@@ -172,7 +172,7 @@ client.on("message", async (msg) => {
     if (msg.content.startsWith("!owner-of")) {
       await getOwnerOfToken(msg);
     }
-    if (msg.content = '!commands') {
+    if (msg.content === '!commands') {
       for (let index = 0; index < commands.length; index++) {
         const c = commands[index];
         msg.channel.send(`${c.command} => ${c.description}`)
