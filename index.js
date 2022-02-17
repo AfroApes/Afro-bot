@@ -41,10 +41,10 @@ async function reverseENSLookup(address, web3) {
   } catch (e) {}
 }
 const commands = [
-  {command: '!mints', description: 'AfroList mint count'},
-  {command: '!token-{x}', description: 'Returns token number x'},
-  {command: '!balance {address}', description: 'Returns the balance of {address} in the afro ape origin collection'},
-  {command: '!owner-of {x}', description: 'returns the owner of a token number {x}'},
+  {command: '`!mints`', description: 'AfroList mint count'},
+  {command: '`!token-{x}`', description: 'Returns token number x'},
+  {command: '`!balance {address}`', description: 'Returns the balance of {address} in the afro ape origin collection'},
+  {command: '`!owner-of {x}`', description: 'returns the owner of a token number {x}'},
 ];
 /**
  * Get all AfroList mints
