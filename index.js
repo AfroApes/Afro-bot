@@ -93,7 +93,7 @@ const processBalance = async (msg) => {
   if (regexp.test(addr)) {
     const address = await ens.getAddress(addr);
     msg.channel.send(`checking balance...`);
-    msg.channel.startTyping(3);
+    // msg.channel.startTyping(3);
 
     try {
       msg.channel.send(
@@ -112,7 +112,7 @@ const processBalance = async (msg) => {
   } else {
     msg.reply(`${address} is not valid`);
   }
-  msg.channel.stopTyping(true);
+  // msg.channel.stopTyping(true);
 };
 
 /**
@@ -129,7 +129,7 @@ const getOwnerOfToken = async (msg) => {
   try {
     msg.channel.send(`Fetching owner of token ${id}...`);
 
-    msg.channel.startTyping(3);
+
     const owner = await ownerOf(id);
     var name = await reverseENSLookup(owner, web3);
     console.log(name)
@@ -149,7 +149,7 @@ const getOwnerOfToken = async (msg) => {
     msg.reply("Unexpected error occured while fetching balance");
   }
 
-  msg.channel.stopTyping(true);
+
 };
 
 client.on("ready", () => {
@@ -158,6 +158,7 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   try {
+    msg.channel.startTyping(3);
     if (msg.content.startsWith("!token-")) {
       await getToken(msg);
       // msg.reply(mints[id]);
@@ -173,11 +174,13 @@ client.on("message", async (msg) => {
       await getOwnerOfToken(msg);
     }
     if (msg.content === '!commands') {
+      msg.channel.send('Fetching Commands...');
       for (let index = 0; index < commands.length; index++) {
         const c = commands[index];
         msg.channel.send(`${c.command} => ${c.description}`)
       }
     }
+    msg.channel.stopTyping(true);
   } catch (error) {
     msg.reply("Unexpected error occured: " + error.message);
   }
