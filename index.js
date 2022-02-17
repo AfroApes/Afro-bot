@@ -2,10 +2,16 @@ require("dotenv").config(); //initialize dotenv
 
 const { Client, MessageAttachment } = require("discord.js");
 const client = new Client();
+var provider = process.env.MAINNET;
 const axios = require("axios");
 const abi = require("./abi");
 var Web3 = require("web3");
-var provider = process.env.MAINNET;
+import ENS, { getEnsAddress } from '@ensdomains/ensjs'
+
+
+
+const ensjs = new ENS({ provider, ensAddress: getEnsAddress('1') })
+
 var web3Provider = new Web3.providers.HttpProvider(provider);
 var web3 = new Web3(web3Provider);
 const ens = web3.eth.ens;
@@ -103,13 +109,19 @@ const getOwnerOfToken = async (msg) => {
 
     msg.channel.startTyping(3);
     const owner = await ownerOf(id)
+    var name = await ensjs.getName(owner)
+// Check to be sure the reverse record is correct.
+if(owner != await ensjs.name(name).getAddress()) {
+  name = owner;
+}
+
     await axios
     .get("https://api.afroapes.com/v1/collections/afro-apes-the-origin/" + id)
     .then((response) => {
       const url = response.data;
       msg.channel.send(new MessageAttachment(url.temp_path))
       msg.channel.send(
-        `Elder ${owner} owns this Afro Ape `
+        `Elder ${name} owns this Afro Ape `
       );
     });
     

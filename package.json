@@ -16,6 +16,7 @@
   "author": "obajohn75@gmail.com",
   "license": "MIT",
   "dependencies": {
+    "@ensdomains/ensjs": "^2.1.0",
     "axios": "^0.25.0",
     "discord.js": "^12.5.3",
     "dotenv": "^16.0.0",
@@ -23,8 +24,8 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-export-default-from": "^7.16.7",
-    "nodemon": "^2.0.15",
-    "cz-conventional-changelog": "^3.3.0"
+    "cz-conventional-changelog": "^3.3.0",
+    "nodemon": "^2.0.15"
   },
   "config": {
     "commitizen": {
