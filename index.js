@@ -40,7 +40,12 @@ async function reverseENSLookup(address, web3) {
     }
   } catch (e) {}
 }
-
+const commands = [
+  {command: '!mints', description: 'AfroList mint count'},
+  {command: '!token-{x}', description: 'Returns token number x'},
+  {command: '!balance {address}', description: 'Returns the balance of {address} in the afro ape origin collection'},
+  {command: '!owner-of {x}', description: 'returns the owner of a token number {x}'},
+];
 /**
  * Get all AfroList mints
  * @returns Array
@@ -166,6 +171,12 @@ client.on("message", async (msg) => {
     }
     if (msg.content.startsWith("!owner-of")) {
       await getOwnerOfToken(msg);
+    }
+    if (msg.content = '!commands') {
+      for (let index = 0; index < commands.length; index++) {
+        const c = commands[index];
+        msg.channel.send(`${c.command} => ${c.description}`)
+      }
     }
   } catch (error) {
     msg.reply("Unexpected error occured: " + error.message);
