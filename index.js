@@ -38,6 +38,7 @@ const commands = [
   {command: '`!token-{x}`', description: 'Returns token number x'},
   {command: '`!balance {address}`', description: 'Returns the balance of {address} in the afro ape origin collection'},
   {command: '`!owner-of {x}`', description: 'returns the owner of a token number {x}'},
+  {command: '`!owners access-mask`', description: 'returns the owners of access mask collectible.'},
 ];
 
 var web3Provider = new Web3.providers.HttpProvider(provider);
