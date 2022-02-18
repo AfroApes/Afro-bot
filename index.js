@@ -35,10 +35,10 @@ async function FetchOwners(msg){
 //registered commands
 const commands = [
   {command: '`!mints`', description: 'AfroList mint count'},
-  {command: '`!token-{x}`', description: 'Returns token number x'},
-  {command: '`!balance {address}`', description: 'Returns the balance of {address} in the afro ape origin collection'},
-  {command: '`!owner-of {x}`', description: 'returns the owner of a token number {x}'},
-  {command: '`!owners access-mask`', description: 'returns the owners of access mask collectible.'},
+  {command: '`!token-{x}`', description: 'token'},
+  {command: '`!balance {address}`', description: 'balance of {address} in the afro ape origin collection'},
+  {command: '`!owner-of {x}`', description: 'owner of token {x}'},
+  {command: '`!owners access-mask`', description: 'owners of access mask collectible.'},
 ];
 
 var web3Provider = new Web3.providers.HttpProvider(provider);
