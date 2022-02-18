@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config(); //initialize dotenv
-// import ENS, { getEnsAddress } from '@ensdomains/ensjs'
 import { Client, MessageAttachment } from "discord.js";
 import namehash from "eth-ens-namehash";
 const client = new Client();
@@ -8,7 +7,38 @@ var provider = process.env.MAINNET;
 import axios from "axios";
 import { abi } from "./abi/index.js";
 import Web3 from "web3";
+import Moralis from "moralis/node.js";
+import { writeFile } from 'fs';
 
+//load moralis credentials
+const serverUrl = process.env.MORALIS_SERVER;
+const appId = process.env.MORALIS_APP_ID;
+
+Moralis.start({ serverUrl, appId });
+
+async function FetchOwners(msg){
+  const options = { address: process.env.CONTRACT_ADDRESS_COLLECTIBLES, token_id: "0", chain: "polygon" };
+  const tokenIdOwners = await Moralis.Web3API.token.getTokenIdOwners(options);
+  // console.log(tokenIdOwners)
+  // return tokenIdOwners
+  let owners = ""
+  tokenIdOwners.result.forEach(r=>{
+    owners += `${r.owner_of} => ${r.amount} \n`
+  })
+  writeFile('./records/owners.txt', owners, (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+  msg.channel.send(new MessageAttachment('./records/owners.txt'))
+}
+// console.log(FetchOwners())
+//registered commands
+const commands = [
+  {command: '`!mints`', description: 'AfroList mint count'},
+  {command: '`!token-{x}`', description: 'Returns token number x'},
+  {command: '`!balance {address}`', description: 'Returns the balance of {address} in the afro ape origin collection'},
+  {command: '`!owner-of {x}`', description: 'returns the owner of a token number {x}'},
+];
 
 var web3Provider = new Web3.providers.HttpProvider(provider);
 var web3 = new Web3(web3Provider);
@@ -40,12 +70,7 @@ async function reverseENSLookup(address, web3) {
     }
   } catch (e) {}
 }
-const commands = [
-  {command: '`!mints`', description: 'AfroList mint count'},
-  {command: '`!token-{x}`', description: 'Returns token number x'},
-  {command: '`!balance {address}`', description: 'Returns the balance of {address} in the afro ape origin collection'},
-  {command: '`!owner-of {x}`', description: 'returns the owner of a token number {x}'},
-];
+
 /**
  * Get all AfroList mints
  * @returns Array
@@ -188,6 +213,13 @@ client.on("message", async (msg) => {
         const c = commands[index];
         msg.channel.send(`${c.command} => ${c.description}`)
       }
+      msg.channel.stopTyping(true);
+    }
+    if (msg.content === "!owners access-mask") {
+      msg.channel.startTyping(3);
+      msg.channel.send('Fetching Owners...');
+      await FetchOwners(msg)
+      
       msg.channel.stopTyping(true);
     }
     
