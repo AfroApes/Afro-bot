@@ -64,7 +64,7 @@ web3.eth.getBlockNumber().then((result) => {
 async function FetchOwnersOfOrigin(msg) {
   const options = {address: process.env.CONTRACT_ADDRESS}
 
-  const originOwners = await Moralis.Web3API.getNFTOwners(options)
+  const originOwners = await Moralis.Web3API.token.getNFTOwners(options)
 
   let owners = ""
   originOwners.result.forEach(r=>{
