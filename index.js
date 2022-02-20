@@ -67,10 +67,14 @@ async function FetchOwnersOfOrigin(msg) {
   const originOwners = await Moralis.Web3API.token.getNFTOwners(options)
 
   let owners = ""
-  originOwners.result.forEach(r=>{
-    owners += `${reverseENSLookup(r.owner_of) || r.owner_of} => ${r.amount} \n`
-  })
-  writeFile('./records/origin_owners.txt', owners, (err) => {
+
+  for (let i = 0; i < originOwners.result.length; i++) {
+    const r = originOwners.result[i];
+    // console.log(await reverseENSLookup(r.owner_of) || r.owner_of)
+    owners += `${await reverseENSLookup(r.owner_of) || r.owner_of} => Afro Ape #${r.token_id} \n`
+  }
+  console.log(owners)
+  await writeFile('./records/origin_owners.txt', owners, (err) => {
     if (err) throw err;
     console.log('The file has been saved!');
   });
