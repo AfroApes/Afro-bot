@@ -16,21 +16,6 @@ const appId = process.env.MORALIS_APP_ID;
 
 Moralis.start({ serverUrl, appId });
 
-async function FetchOwners(msg){
-  const options = { address: process.env.CONTRACT_ADDRESS_COLLECTIBLES, token_id: "0", chain: "polygon" };
-  const tokenIdOwners = await Moralis.Web3API.token.getTokenIdOwners(options);
-  // console.log(tokenIdOwners)
-  // return tokenIdOwners
-  let owners = ""
-  tokenIdOwners.result.forEach(r=>{
-    owners += `${r.owner_of} => ${r.amount} \n`
-  })
-  writeFile('./records/owners.txt', owners, (err) => {
-    if (err) throw err;
-    console.log('The file has been saved!');
-  });
-  msg.channel.send(new MessageAttachment('./records/owners.txt'))
-}
 // console.log(FetchOwners())
 //registered commands
 const commands = [
@@ -54,7 +39,45 @@ web3.eth.getBlockNumber().then((result) => {
   console.log("Latest Ethereum Block is ", result);
 });
 
-async function reverseENSLookup(address, web3) {
+
+/**
+ * Get onwers of access mask from collectible contract
+ * @param {object} msg
+ * @returns {void}
+ */
+ async function FetchOwnersOfAccessMask(msg){
+  const options = { address: process.env.CONTRACT_ADDRESS_COLLECTIBLES, token_id: "0", chain: "polygon" };
+  const tokenIdOwners = await Moralis.Web3API.token.getTokenIdOwners(options);
+  // console.log(tokenIdOwners)
+  // return tokenIdOwners
+  let owners = ""
+  tokenIdOwners.result.forEach(r=>{
+    owners += `${r.owner_of} => ${r.amount} \n`
+  })
+  writeFile('./records/collectibles_owners.txt', owners, (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+  msg.channel.send(new MessageAttachment('./records/collectibles_owners.txt'))
+}
+
+async function FetchOwnersOfOrigin(msg) {
+  const options = {address: process.env.CONTRACT_ADDRESS}
+
+  const originOwners = await Moralis.Web3API.getNFTOwners(options)
+
+  let owners = ""
+  originOwners.result.forEach(r=>{
+    owners += `${reverseENSLookup(r.owner_of) || r.owner_of} => ${r.amount} \n`
+  })
+  writeFile('./records/origin_owners.txt', owners, (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+  msg.channel.send(new MessageAttachment('./records/origin_owners.txt'))
+}
+
+async function reverseENSLookup(address) {
   let lookup = address.toLowerCase().substr(2) + ".addr.reverse";
   let ResolverContract = await web3.eth.ens.getResolver(lookup);
   let nh = namehash.hash(lookup);
@@ -157,7 +180,7 @@ const getOwnerOfToken = async (msg) => {
 
 
     const owner = await ownerOf(id);
-    var name = await reverseENSLookup(owner, web3);
+    var name = await reverseENSLookup(owner);
     console.log(name)
     // Check to be sure the reverse record is correct.
     if (!name) {
@@ -219,11 +242,17 @@ client.on("message", async (msg) => {
     if (msg.content === "!owners access-mask") {
       msg.channel.startTyping(3);
       msg.channel.send('Fetching Owners...');
-      await FetchOwners(msg)
+      await FetchOwnersOfAccessMask(msg)
       
       msg.channel.stopTyping(true);
     }
-    
+    if (msg.content === "!owners origin") {
+      msg.channel.startTyping(3);
+      msg.channel.send('Fetching Owners...');
+      await FetchOwnersOfOrigin(msg)
+      
+      msg.channel.stopTyping(true);
+    }
   } catch (error) {
     msg.reply("Unexpected error occured: " + error.message);
   }
