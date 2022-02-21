@@ -54,6 +54,12 @@ web3.eth.getBlockNumber().then((result) => {
   tokenIdOwners.result.forEach(r=>{
     owners += `${r.owner_of} => ${r.amount} \n`
   })
+const res = tokenIdOwners.result.sort((a, b) => parseInt(a.amount) - parseInt(b.amount))
+  for (let i = 0; i < res.length; i++) {
+    const r = res[i];
+    // console.log(await reverseENSLookup(r.owner_of) || r.owner_of)
+    owners += `${await reverseENSLookup(r.owner_of) || r.owner_of} => ${r.amount} \n`
+  }
   writeFile('./records/collectibles_owners.txt', owners, (err) => {
     if (err) throw err;
     console.log('The file has been saved!');
@@ -73,8 +79,8 @@ async function FetchOwnersOfOrigin(msg) {
     // console.log(await reverseENSLookup(r.owner_of) || r.owner_of)
     owners += `${await reverseENSLookup(r.owner_of) || r.owner_of} => Afro Ape #${r.token_id} \n`
   }
-  console.log(owners)
-  await writeFile('./records/origin_owners.txt', owners, (err) => {
+  // console.log(owners)
+   writeFile('./records/origin_owners.txt', owners, (err) => {
     if (err) throw err;
     console.log('The file has been saved!');
   });
@@ -245,14 +251,14 @@ client.on("message", async (msg) => {
     }
     if (msg.content === "!owners access-mask") {
       msg.channel.startTyping(3);
-      msg.channel.send('Fetching Owners...');
+      msg.channel.send('Fetching Owners...this may take up to 2 minutes');
       await FetchOwnersOfAccessMask(msg)
       
       msg.channel.stopTyping(true);
     }
     if (msg.content === "!owners origin") {
       msg.channel.startTyping(3);
-      msg.channel.send('Fetching Owners...');
+      msg.channel.send('Fetching Owners... this may take up to 2 minutes');
       await FetchOwnersOfOrigin(msg)
       
       msg.channel.stopTyping(true);
