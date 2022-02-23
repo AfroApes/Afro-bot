@@ -48,11 +48,11 @@ web3.eth.getBlockNumber().then((result) => {
  async function FetchOwnersOfAccessMask(msg){
   const options = { address: process.env.CONTRACT_ADDRESS_COLLECTIBLES, token_id: "0", chain: "polygon" };
   const tokenIdOwners = await Moralis.Web3API.token.getTokenIdOwners(options);
-  // console.log(tokenIdOwners)
+  console.log(tokenIdOwners)
   // return tokenIdOwners
   let owners = ""
   tokenIdOwners.result.forEach(r=>{
-    owners += `${r.owner_of} => ${r.amount} \n`
+    owners += `${r.owner_of} => ${r.amount} \n` //0x4e293c1acbb25b56ac368287ada3a7fe2f0ea3c0 => 1
   })
 const res = tokenIdOwners.result.sort((a, b) => parseInt(a.amount) - parseInt(b.amount))
   for (let i = 0; i < res.length; i++) {
