@@ -219,7 +219,7 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   try {
-    
+    msg.channel.send(msg.content)
     if (msg.content.startsWith("!token-")) {
       msg.channel.startTyping(3);
       await getToken(msg);
