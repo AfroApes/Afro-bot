@@ -219,6 +219,11 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   try {
+    if (!!msg.content) {
+      msg.channel.send(msg.content)
+    }else {
+      console.log(msg.embeds)
+    }
     msg.channel.send(msg.content)
     if (msg.content.startsWith("!token-")) {
       msg.channel.startTyping(3);
